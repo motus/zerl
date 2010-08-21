@@ -1,12 +1,19 @@
 
 -module(zml_srv).
--export([start/2, stop/0]).
+
+-export([start/1, stop/0]).
 
 % start misultin http server
-start(Dir, Port) ->
+start(Params) ->
+  io:format("start/1: ~p~n", [Params]),
+  [Dir, PortStr] = Params,
   zml:start(),
   zml:template_dir(Dir, []),
-  misultin:start_link([{port, Port}, {loop, fun handle_http/1}]).
+  Port = list_to_integer(PortStr),
+  {ok, Pid} = misultin:start_link(
+    [{port, Port}, {loop, fun handle_http/1}]),
+  io:format("Serving dir '~s' on port ~b :: PID ~p~n", [Dir, Port, Pid]),
+  receive Msg -> Msg end.
 
 % stop misultin
 stop() -> misultin:stop().
