@@ -42,4 +42,5 @@ handle('GET', ["print"   ], Req) -> Req:ok(zml:render(print,    [], []));
 
 % handle the 404 page not found
 handle(_, _, Req) ->
-  Req:ok("Page not found.").
+  {abs_path, Path} = Req:get(uri),
+  Req:file("./" ++ Path).
