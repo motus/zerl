@@ -27,21 +27,13 @@ handle_http(Req, Options) ->
 
 % handle a GET on /Page
 handle('GET', [], Req, Options) ->
-  Req:ok(zml:render("/index.zml", [], Options));
-
-%% % handle a GET on /users/{username}
-%% handle('GET', ["users", UserName], Req) ->
-%%   Req:ok("This is ~s's page.", [UserName]);
-
-%% % handle a GET on /users/{username}/messages
-%% handle('GET', ["users", UserName, "messages"], Req) ->
-%%   Req:ok("This is ~s's messages page.", [UserName]);
+  Req:ok(zml:render("/index.zml", Options));
 
 handle('GET', _, Req, Options) ->
   {abs_path, Path} = Req:get(uri),
   % io:format("= GET: ~s~n", [Path]),
   case string:right(Path, 5) of
-    [_|".zml"] -> Req:ok(zml:render(Path, [], Options));
+    [_|".zml"] -> Req:ok(zml:render(Path, Options));
     _ -> BaseDir = proplists:get_value(base_dir, Options, "."),
          Req:file(BaseDir ++ "/" ++ Path)
   end.
