@@ -5,32 +5,29 @@
 
 % start misultin http server
 start(Params) ->
-  io:format("start/1: ~p~n", [Params]),
-  [Dir, PortStr] = Params,
+  [Dir, Port] = Params,
+  Options = [{base_dir, Dir}, {port, list_to_integer(Port)}],
+  io:format("- zml_srv:start/1: ~p~n", [Options]),
   zml:start(),
-  zml:template_dir(Dir, []),
-  Port = list_to_integer(PortStr),
+  zml:template_dir("", Options),
   {ok, Pid} = misultin:start_link(
-    [{port, Port}, {loop, fun handle_http/1}]),
-  io:format("Serving dir '~s' on port ~b :: PID ~p~n", [Dir, Port, Pid]),
+    [{loop, fun(Req) -> handle_http(Req, Options) end} | Options]),
+  io:format("- zml_srv:start/1: PID: ~p~n", [Pid]),
+  io:format("  ~p~n",
+    [[{Name, Path, Ts} ||
+      {Name, Path, Ts, _Templ} <- ets:tab2list(zml_templates)]]),
   receive Msg -> Msg end.
 
 % stop misultin
 stop() -> misultin:stop().
 
 % callback function called on incoming http request
-handle_http(Req) ->
-  % dispatch to rest
-  handle(Req:get(method), Req:resource([lowercase, urldecode]), Req).
+handle_http(Req, Options) ->
+  handle(Req:get(method), Req:resource([lowercase, urldecode]), Req, Options).
 
 % handle a GET on /Page
-handle('GET', [], Req) -> Req:ok(zml:render(index, [], []));
-
-handle('GET', ["company" ], Req) -> Req:ok(zml:render(company,  [], []));
-handle('GET', ["deal"    ], Req) -> Req:ok(zml:render(deal,     [], []));
-handle('GET', ["index"   ], Req) -> Req:ok(zml:render(index,    [], []));
-handle('GET', ["merchant"], Req) -> Req:ok(zml:render(merchant, [], []));
-handle('GET', ["print"   ], Req) -> Req:ok(zml:render(print,    [], []));
+handle('GET', [], Req, Options) ->
+  Req:ok(zml:render("/index.zml", [], Options));
 
 %% % handle a GET on /users/{username}
 %% handle('GET', ["users", UserName], Req) ->
@@ -40,7 +37,12 @@ handle('GET', ["print"   ], Req) -> Req:ok(zml:render(print,    [], []));
 %% handle('GET', ["users", UserName, "messages"], Req) ->
 %%   Req:ok("This is ~s's messages page.", [UserName]);
 
-% handle the 404 page not found
-handle(_, _, Req) ->
+handle('GET', _, Req, Options) ->
   {abs_path, Path} = Req:get(uri),
-  Req:file("./" ++ Path).
+  % io:format("= GET: ~s~n", [Path]),
+  case string:right(Path, 5) of
+    [_|".zml"] -> Req:ok(zml:render(Path, [], Options));
+    _ -> BaseDir = proplists:get_value(base_dir, Options, "."),
+         Req:file(BaseDir ++ "/" ++ Path)
+  end.
+
