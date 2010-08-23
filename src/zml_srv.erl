@@ -14,8 +14,8 @@ start(Params) ->
     [{loop, fun(Req) -> handle_http(Req, Options) end} | Options]),
   io:format("- zml_srv:start/1: PID: ~p~n", [Pid]),
   io:format("  ~p~n",
-    [[{Name, Path, Ts, IsStatic} ||
-      {Name, Path, Ts, _Templ, IsStatic} <- ets:tab2list(zml_templates)]]),
+    [[{Name, Path, Ts} ||
+      {Name, Path, Ts, _Templ} <- ets:tab2list(zml_templates)]]),
   receive Msg -> Msg end.
 
 % stop misultin
@@ -26,12 +26,12 @@ handle_http(Req, Options) ->
   handle(Req:get(method), Req:resource([lowercase, urldecode]), Req, Options).
 
 % handle a GET on /Page
-handle('GET', [], Req, Options) ->
-  Req:ok(zml:render("/index.zml", Options));
+handle('GET', [], Req, _Options) ->
+  Req:respond(302, [{"Location", "/index.zml"}], []);
 
 handle('GET', _, Req, Options) ->
   {abs_path, Path} = Req:get(uri),
-  % io:format("= GET: ~s~n", [Path]),
+  io:format("= GET: ~s~n", [Path]),
   case string:right(Path, 5) of
     [_|".zml"] -> Req:ok(zml:render(Path, Options));
     _ -> BaseDir = proplists:get_value(base_dir, Options, "."),
