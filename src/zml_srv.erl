@@ -13,9 +13,8 @@ start(Params) ->
   {ok, Pid} = misultin:start_link(
     [{loop, fun(Req) -> handle_http(Req, Options) end} | Options]),
   io:format("- zml_srv:start/1: PID: ~p~n", [Pid]),
-  io:format("  ~p~n",
-    [[{Name, Path, Ts} ||
-      {Name, Path, Ts, _Templ} <- ets:tab2list(zml_templates)]]),
+  io:format("  ~p~n", [[{Name, Path, Ts, IsStatic}
+    || {Name, Path, Ts, _Templ, IsStatic} <- ets:tab2list(zml_templates)]]),
   receive Msg -> Msg end.
 
 % stop misultin
