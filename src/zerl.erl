@@ -1,21 +1,22 @@
 
--module(zml_srv).
+-module(zerl).
 
--export([start/1, stop/0]).
+-export([start_link/0, start/1, stop/0]).
+
+start_link() -> start([[".", 3034]]).
 
 % start misultin http server
 start(Params) ->
   [Dir, Port] = Params,
   Options = [{base_dir, Dir}, {port, list_to_integer(Port)}],
-  io:format("- zml_srv:start/1: ~p~n", [Options]),
+  error_logger:info_msg("- zml_srv:start/1: ~p~n", [Options]),
   zml:start(),
   zml:template_dir("", Options),
   {ok, Pid} = misultin:start_link(
     [{loop, fun(Req) -> handle_http(Req, Options) end} | Options]),
-  io:format("- zml_srv:start/1: PID: ~p~n", [Pid]),
-  io:format("  ~p~n", [[{Name, Path, Ts, IsStatic}
-    || {Name, Path, Ts, _Templ, IsStatic} <- ets:tab2list(zml_templates)]]),
-  receive Msg -> Msg end.
+  error_logger:info_msg("- zml_srv:start/1: PID: ~p~n", [Pid]),
+  error_logger:info_report([{Name, {Path, Ts, IsStatic}}
+    || {Name, Path, Ts, _Templ, IsStatic} <- ets:tab2list(zml_templates)]).
 
 % stop misultin
 stop() -> misultin:stop().
@@ -30,7 +31,7 @@ handle('GET', [], Req, _Options) ->
 
 handle('GET', _, Req, Options) ->
   {abs_path, Path} = Req:get(uri),
-  io:format("= GET: ~s~n", [Path]),
+  error_logger:info_msg("= GET: ~s~n", [Path]),
   case string:right(Path, 5) of
     [_|".zml"] -> Req:ok(zml:render(Path, Options));
     _ -> BaseDir = proplists:get_value(base_dir, Options, "."),
