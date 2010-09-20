@@ -2,8 +2,9 @@
   {description, "ZERL Web Farmework"},
   {vsn, "1.0"},
   {registered, []},
-  {applications, [kernel, stdlib]},
-  {incliuded_applications, [misultin, epgsql_pool, zml]},
+  {applications, [kernel, stdlib, sasl]},
+  {incliuded_applications, [epgsql_pool, zml, misultin]},
   {mod, {zerl_app, []}},
-  {env, []} ]}.
+  {env, []}
+]}.
 

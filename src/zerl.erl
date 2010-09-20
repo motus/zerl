@@ -3,7 +3,9 @@
 
 -export([start_link/0, start/1, stop/0]).
 
-start_link() -> start([[".", 3034]]).
+start_link() ->
+  %% Start misultin, zml, and epgsql_pool here?
+  {ok, self()}.
 
 % start misultin http server
 start(Params) ->
