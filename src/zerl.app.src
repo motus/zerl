@@ -5,6 +5,9 @@
   {applications, [kernel, stdlib, sasl]},
   {incliuded_applications, [epgsql_pool, zml, misultin]},
   {mod, {zerl_app, []}},
-  {env, []}
+  {env, [
+    {base_dir, "."},
+    {zml_templates, [".", "./zml"]},
+    {handle_http_module, zerl_tests} ]}
 ]}.
 
