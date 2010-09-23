@@ -26,7 +26,7 @@ handle('GET', _, Req) ->
   error_logger:info_msg("= GET: ~s~n", [Path]),
   case string:right(Path, 5) of
     [_|".zml"] -> Req:ok(zml:render(Path));
-    _ -> BaseDir = application:get_env(base_dir),
+    _ -> {ok, BaseDir} = application:get_env(base_dir),
          Req:file(BaseDir ++ "/" ++ Path)
   end.
 
