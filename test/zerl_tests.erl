@@ -1,9 +1,18 @@
 
 -module(zerl_tests).
 
--export([handle_http/1]).
+-compile(export_all).
 
-% callback function called on incoming http request
+-include_lib("eunit/include/eunit.hrl").
+
+
+main_test() -> ?_assert(start() =:= ok).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+start() -> application:start(zerl).
+
+% callback function invoked on incoming http request
 handle_http(Req) ->
   error_logger:info_report(Req),
   handle(Req:get(method), Req:resource([lowercase, urldecode]), Req).
