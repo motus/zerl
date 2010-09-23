@@ -6,13 +6,19 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 start_link() ->
-  zml:start(),
+  % zml:start(),
+  application:start(zml),
   lists:foreach(fun zml:template_dir/1,
-    default(application:get_env(zml_templates), ["."])),
-  misultin:start_link(
+    default(application:get_env(zml_templates), [""])),
+  error_logger:info_report([{Name, {Path, Ts, IsStatic}}
+    || {Name, Path, Ts, IsStatic} <- ets:tab2list(zml_templates)]),
+  application:start(misultin),
+  Options =
     get_fun(handle_http_module, handle_http,    loop) ++
     get_fun(handle_ws_module,   handle_ws,   ws_loop) ++
-    application:get_all_env(misultin)).
+    application:get_all_env(misultin),
+  error_logger:info_report(Options),
+  misultin:start_link(Options).
 
 start() -> start_link().
 

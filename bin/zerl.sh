@@ -17,7 +17,9 @@ export ZML_ZSS_LIBS=$SPREEZIO_ROOT/zml/lib
 
 EBIN_PATH=`echo $SPREEZIO_ROOT/{zml,zerl,contrib/{misultin,epgsql{,_pool}}}/ebin`
 
-RUN="erl -pa $EBIN_PATH -boot start_sasl -config zerl -run zerl_tests start" #  -run erlang halt"
+rebar compile
+
+RUN="erl -pa $EBIN_PATH -boot start_sasl -config zerl -run zerl_tests start" # -noshell -run erlang halt"
 
 echo $RUN
 

@@ -1,13 +1,13 @@
 {application, zerl, [
   {description, "ZERL Web Farmework"},
-  {vsn, "1.0"},
+  {vsn, "0.2.0"},
   {registered, []},
   {applications, [kernel, stdlib, sasl]},
-  {incliuded_applications, [epgsql_pool, zml, misultin]},
+  {included_applocations, [epgsql_pool, zml, misultin]},
   {mod, {zerl_app, []}},
   {env, [
-    {base_dir, "."},
-    {zml_templates, [".", "./zml"]},
+    {base_dir, "../website3"},
+    {zml_templates, [""]},
     {handle_http_module, zerl_tests} ]}
 ]}.
 
