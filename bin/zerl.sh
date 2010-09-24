@@ -11,17 +11,15 @@ then
   fi
 fi
 
-WEBSITE3_PATH=$SPREEZIO_ROOT/website3
-
 export ZML_ZSS_LIBS=$SPREEZIO_ROOT/zml/lib
 
 EBIN_PATH=`echo $SPREEZIO_ROOT/{zml,zerl,contrib/{misultin,epgsql{,_pool}}}/ebin`
 
 rebar compile
+mkdir -p $SPREEZIO_ROOT/zerl/logs
 
 RUN="erl -pa $EBIN_PATH -boot start_sasl -config zerl -run zerl_tests start" # -noshell -run erlang halt"
 
 echo $RUN
-
 $RUN
 
