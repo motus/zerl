@@ -3,7 +3,7 @@
   {vsn, "0.2.0"},
   {registered, []},
   {applications, [kernel, stdlib, sasl]},
-  {included_applocations, [epgsql_pool, zml, misultin]},
+  {included_applocations, [crypto, ssl, epgsql, epgsql_pool, zml, misultin]},
   {mod, {zerl_app, []}},
   {env, [
     {base_dir, "../website3"},

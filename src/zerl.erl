@@ -6,8 +6,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 start_link() ->
-  % zml:start(),
-  application:start(zml),
+  lists:foreach(fun application:start/1,
+    [crypto, ssl, epgsql, epgsql_pool, zml]),
   lists:foreach(fun zml:template_dir/1,
     default(application:get_env(zml_templates), [""])),
   error_logger:info_report([{Name, {Path, Ts, IsStatic}}
