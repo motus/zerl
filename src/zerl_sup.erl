@@ -16,7 +16,11 @@
 %% API functions
 %% ===================================================================
 
-start_link() -> supervisor:start_link({local, ?MODULE}, ?MODULE, []).
+start_link() ->
+  lists:foreach(
+    fun(App) -> ok = application:start(App) end,
+    [crypto, ssl, epgsql, epgsql_pool, zml, misultin]),
+  supervisor:start_link({local, ?MODULE}, ?MODULE, []).
 
 %% ===================================================================
 %% Supervisor callbacks

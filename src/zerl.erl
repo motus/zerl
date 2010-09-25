@@ -6,8 +6,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 start_link() ->
-  lists:foreach(fun application:start/1,
-    [crypto, ssl, epgsql, epgsql_pool, zml, misultin]),
   lists:foreach(fun zml:template_dir/1,
     default(application:get_env(zml_templates), [""])),
   misultin:start_link(
