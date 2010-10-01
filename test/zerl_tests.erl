@@ -27,6 +27,7 @@ handle('GET', _, Req) ->
   case string:right(Path, 5) of
     [_|".zml"] -> Req:ok(zml:render(Path));
     _ -> {ok, BaseDir} = application:get_env(base_dir),
+         % WARNING! Security hole: can serve ANY file!
          Req:file(BaseDir ++ "/" ++ Path)
   end.
 
