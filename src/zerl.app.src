@@ -1,6 +1,7 @@
 {application, zerl, [
   {description, "ZERL Web Farmework"},
   {vsn, "0.2.0"},
+  {modules, [zerl, zerl_app, zerl_sup]},
   {registered, []},
   {applications, [kernel, stdlib, sasl]},
   {included_applocations, [crypto, ssl, epgsql, epgsql_pool, zml, misultin]},
